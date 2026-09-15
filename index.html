@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simon Haerter</title>
+  <style>
+    /* Fonts */
+    @font-face {
+      font-family: 'YourFont';
+      src: url('SuisseScreen-Medium-WebXL.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'TitleFont';
+      src: url('SuisseScreen-Medium-WebXL.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'ListingFont';
+      src: url('SuisseScreen-Regular-WebXL.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    /* Page */
+    body {
+      --body-color: #000000;
+      --title-color: #000000;
+      --listing-color: #000000;
+      --column1-color: #ffffff;
+      --column2-color: #ffffff;
+      --column3-color: #ffffff;
+      --body-max-width: 43ch;
+      --body-font-size: 11pt;
+      --title-font-size: 11pt;
+      --listing-font-size: 9pt;
+      --listing-line-height: 1.35;
+      --site-name-font-size: 11pt;
+      --crawler-speed: 8s;
+      background: #fff;
+      color: var(--body-color);
+      font-family: 'YourFont', sans-serif;
+      font-weight: normal;
+      font-size: var(--body-font-size);
+      min-height: 100%;
+      display: block;
+      text-align: left;
+      letter-spacing: 0.5pt;
+      padding: 20px 20px;
+    }
+
+    /* Three-column layout */
+    .columns {
+      width: calc(100vw - 60px);
+      max-width: none;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6vw;
+      align-items: start;
+    }
+
+    .column1,
+    .column2,
+    .column3 {
+      min-width: 0;
+    }
+
+    .column1 {
+      background-color: var(--column1-color);
+    }
+
+    .column2 {
+      background-color: var(--column2-color);
+    }
+
+    .column3 {
+      background-color: var(--column3-color);
+    }
+
+    .title {
+      display: block;
+      padding-left: 0px;
+      margin-bottom: 0.0em;
+      color: var(--title-color);
+      font-family: 'TitleFont';
+      font-size: var(--title-font-size);
+      letter-spacing: 0.08em;
+    }
+
+    p {
+      font-size: var(--body-font-size);
+      line-height: 1.35;
+      margin: 0;
+      max-width: var(--body-max-width);
+    }
+
+    .site-name {
+      font-size: var(--site-name-font-size);
+    }
+
+    .listing {
+      color: var(--listing-color);
+      font-family: 'ListingFont', sans-serif;
+      font-size: var(--listing-font-size);
+      line-height: var(--listing-line-height);
+      letter-spacing: 0.5pt;
+    }
+
+    .work-rotator {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .work-rotator::after {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      content: '';
+      pointer-events: none;
+    }
+
+    .text-crawler {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-bottom: 1em;
+    }
+
+    .text-crawler-track {
+      display: flex;
+      width: max-content;
+      animation: crawler-scroll var(--crawler-speed) linear infinite;
+    }
+
+    .text-crawler-reverse {
+      margin-top: 1em;
+      margin-bottom: 0;
+    }
+
+    .text-crawler-reverse .text-crawler-track {
+      animation-name: crawler-scroll-reverse;
+    }
+
+    .text-crawler-item {
+      flex: 0 0 auto;
+      padding-right: 4em;
+    }
+
+    @keyframes crawler-scroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes crawler-scroll-reverse {
+      from {
+        transform: translateX(-50%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    .work-rotator img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .spacer {
+      height: 1em;
+      margin: 0;
+      padding: 0;
+      line-height: 0;
+    }
+
+    a {
+      color: #000000;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      opacity: 0.5;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      body {
+        --body-font-size: 14pt;
+        --title-font-size: 14pt;
+        --listing-font-size: 9pt;
+        --site-name-font-size: 14pt;
+        display: block;
+        padding: 10px 10px;
+      }
+
+      .columns {
+        display: block;
+        width: 100%;
+        padding-top: 1.35em;
+      }
+
+      .column1,
+      .column2,
+      .column3 {
+        margin-bottom: 150px;
+      }
+
+      .site-name {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        z-index: 10;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="columns">
+    <div class="column1">
+      <p class="site-name">SIMON HAERTER</p>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+
+      <p class="title"></p>
+      <p>Simon Haerter is a Swiss graphic designer working across branding, identity, and campaigns.</p>
+      <div class="spacer"></div>
+      <p>Drawing inspiration from Swiss-style design and brutalist architecture, his practice combines clear visual language, boldness and motion with a deeply conceptual approach.</p>
+      <div class="spacer"></div>
+      <p>His process often involves breaking complex topics down to their fundamentals – and using those findings to build true-to-nature visual systems.</p>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      
+      <p class="title">CONTACT</p>
+      <p class="links">
+        <a href="mailto:simonhaerter@gmail.com">simonhaerter@gmail.com</a> </p>
+        <div class="spacer"></div>
+
+        </p> <a href="https://www.linkedin.com/in/simonhaerter/" target="_blank">LinkedIn</a></p>
+        <a href="https://instagram.com/simonhaerter.graphics" target="_blank">Instagram</a> </p>
+      
+    </div>
+
+     
+
+    <div class="column2">
+      <div class="text-crawler" aria-label="Scrolling text">
+        <div class="text-crawler-track">
+          <span class="text-crawler-item">COMING SOON</span>
+        </div>
+      </div>
+      <div class="work-rotator" aria-label="Selected work">
+        <img src="images/UnderConstruction.jpg" alt="Selected work">
+      </div>
+      <div class="text-crawler text-crawler-reverse" aria-label="Scrolling text">
+        <div class="text-crawler-track">
+          <span class="text-crawler-item">COMING SOON</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="column3">
+    <p class="title">RECOGNITION</p>
+    <p class="listing">- INTL Poster Competition, Finalist. 2025</p>
+    <p class="listing">- The Design Kids Awards, 2x Winner. 2025</p>
+    <p class="listing">- Indigo Design Awards, 3x Gold/4x Silver/3x Bronze. 2024</p>
+    <p class="listing">- IIID Awards, Gold + Jury Award. 2023</p>
+    <p class="listing">- Swiss Viz Awards, Winner. 2023</p>
+
+    <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+
+
+    <p class="title">EXHIBITIONS</p>
+    <p class="listing">- Graphics. Designing the Everyday, Swiss National Museum, Zurich. 2026/2027</p>
+    <p class="listing">- Poster Safari, Zurich Design Weeks, Zurich. 2026</p>
+    <p class="listing">- Semantics of Love, Royal College of Art, London. 2023</p>
+
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+
+
+    <p class="title">PRESS</p>
+    <p class="listing"><a href="https://www.grunaad.com/articles/a8-architektur" target="_blank">- GRUNAAD, Interview about ARCHITEKTUR. 2026</a></p>
+    <p class="listing"><a href="https://thedesignkids.org/2025-tdk-award-winner-simon-haerter" target="_blank">- The Design Kids, TDK Award Winner Interview. 2026</a></p>
+
+
+     <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+
+
+    <p class="title">SELECTED CLIENTS</p>
+    <p class="listing">- Akku Kunstplattform</p>
+    <p class="listing">- Jazz’n’more</p>
+    <p class="listing">- Letterspace</p>
+    <p class="listing">- NaN Type Foundry</p>
+    <p class="listing">- NorthernLight</p>
+    <p class="listing">- RunRabbitRun</p>
+    <p class="listing">- Starboard Boats</p>
+    <p class="listing">- Unit Records</p>
+    <p class="listing">- University of Bern</p>
+    <p class="listing">- Zurich Design Weeks</p>
+
+
+    <div class="spacer"></div>
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+  
+      
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.text-crawler').forEach((crawler) => {
+      const crawlerTrack = crawler.querySelector('.text-crawler-track');
+      const crawlerItem = crawlerTrack.querySelector('.text-crawler-item');
+
+      while (crawlerTrack.scrollWidth < crawler.clientWidth) {
+        crawlerTrack.appendChild(crawlerItem.cloneNode(true));
+      }
+
+      Array.from(crawlerTrack.children).forEach((item) => {
+        const crawlerClone = item.cloneNode(true);
+        crawlerClone.setAttribute('aria-hidden', 'true');
+        crawlerTrack.appendChild(crawlerClone);
+      });
+    });
+  </script>
+
+</body>
+</html>
