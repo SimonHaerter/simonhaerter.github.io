@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simon Haerter is a Swiss graphic designer working across brand identity, campaigns, and motion.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <title>Simon Haerter</title>
   <style>
     /* Fonts */
@@ -23,6 +25,13 @@
     @font-face {
       font-family: 'ListingFont';
       src: url('SuisseScreen-Regular-WebXL.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'SiteNameFont';
+      src: url('SuisseScreen-Medium-WebXL.woff2') format('woff2');
       font-weight: normal;
       font-style: normal;
     }
@@ -112,6 +121,7 @@
 
     .site-name {
       font-size: var(--site-name-font-size);
+      font-family: 'SiteNameFont', sans-serif;
     }
 
     .listing {
