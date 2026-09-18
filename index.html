@@ -100,6 +100,15 @@
 
     .column3 {
       background-color: var(--column3-color);
+      text-align: right;
+    }
+
+    .column3 > p,
+    .column3 > .title,
+    .column3 > .listing {
+      width: 100%;
+      max-width: none;
+      text-align: right;
     }
 
     .title {
@@ -130,6 +139,7 @@
       font-size: var(--listing-font-size);
       line-height: var(--listing-line-height);
       letter-spacing: 0.5pt;
+      text-align: right;
     }
 
     .work-rotator {
@@ -295,9 +305,7 @@
           <span class="text-crawler-item">COMING SOON</span>
         </div>
       </div>
-      <div class="work-rotator" aria-label="Selected work">
-        <img src="images/UnderConstruction.jpg" alt="Selected work">
-      </div>
+      <div class="work-rotator" aria-label="Selected work"></div>
       <div class="text-crawler text-crawler-reverse" aria-label="Scrolling text">
         <div class="text-crawler-track">
           <span class="text-crawler-item">COMING SOON</span>
