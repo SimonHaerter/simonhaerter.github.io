@@ -55,6 +55,10 @@
       --column1-color: #ffffff;
       --column2-color: #ffffff;
       --column3-color: #ffffff;
+      --page-padding-top: 20px;
+      --page-padding-right: 24px;
+      --page-padding-bottom: 20px;
+      --page-padding-left: 25px;
       --body-max-width: 43ch;
       --body-font-size: 11pt;
       --title-font-size: 11pt;
@@ -71,17 +75,18 @@
       display: block;
       text-align: left;
       letter-spacing: 0.5pt;
-      padding: 20px 20px;
+      padding: var(--page-padding-top) var(--page-padding-right) var(--page-padding-bottom) var(--page-padding-left);
     }
 
     /* Three-column layout */
     .columns {
-      width: calc(100vw - 60px);
+      width: calc(100vw - (var(--page-padding-left) + var(--page-padding-right)));
       max-width: none;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6vw;
+      gap: 4vw;
       align-items: start;
+      margin-top: 0;
     }
 
     .column1,
