@@ -165,6 +165,7 @@
     .text-crawler-track {
       display: flex;
       width: max-content;
+      min-width: max-content;
       animation: crawler-scroll var(--crawler-speed) linear infinite;
     }
 
@@ -178,26 +179,27 @@
     }
 
     .text-crawler-item {
+      display: inline-block;
       flex: 0 0 auto;
       padding-right: 4em;
     }
 
     @keyframes crawler-scroll {
-      from {
+      0%, 100% {
         transform: translateX(0);
       }
 
-      to {
+      50% {
         transform: translateX(-50%);
       }
     }
 
     @keyframes crawler-scroll-reverse {
-      from {
+      0%, 100% {
         transform: translateX(-50%);
       }
 
-      to {
+      50% {
         transform: translateX(0);
       }
     }
@@ -226,6 +228,65 @@
     }
 
     @media (min-width: 769px) {
+      html,
+      body {
+        cursor: none;
+      }
+
+      .custom-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 171.875px;
+        height: 212.5px;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%) scale(1.09375);
+        will-change: transform;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 1;
+      }
+
+      .custom-cursor .text-crawler {
+        width: 100%;
+        margin: 0;
+        background: transparent;
+        color: #fff;
+        overflow: visible;
+      }
+
+      .custom-cursor .text-crawler-track {
+        background: transparent;
+        color: #fff;
+        min-width: max-content;
+      }
+
+      .custom-cursor .text-crawler-item {
+        color: #fff;
+        background: #000;
+        padding: 0.15em 0.5em 0.2em 0.5em;
+        display: inline-block;
+      }
+
+      .custom-cursor .work-rotator {
+        width: 100%;
+        min-height: 0;
+        height: 100%;
+        background: #000;
+        aspect-ratio: 4 / 5;
+        overflow: hidden;
+      }
+
+      .columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .column2 {
+        display: none;
+      }
+
       .column3,
       .column3 > p,
       .column3 > .title,
@@ -251,6 +312,15 @@
 
     /* Mobile */
     @media (max-width: 768px) {
+      html,
+      body {
+        cursor: auto;
+      }
+
+      .custom-cursor {
+        display: none !important;
+      }
+
       body {
         --body-font-size: 14pt;
         --title-font-size: 14pt;
@@ -272,6 +342,10 @@
         margin-bottom: 150px;
       }
 
+      .column2 {
+        display: block;
+      }
+
       .column3,
       .column3 > p,
       .column3 > .title,
@@ -291,6 +365,20 @@
   </style>
 </head>
 <body>
+  <div class="custom-cursor" aria-hidden="true">
+    <div class="text-crawler" aria-label="Scrolling text">
+      <div class="text-crawler-track">
+        <span class="text-crawler-item">COMING SOON</span>
+      </div>
+    </div>
+    <div class="work-rotator" aria-label="Selected work"></div>
+    <div class="text-crawler text-crawler-reverse" aria-label="Scrolling text">
+      <div class="text-crawler-track">
+        <span class="text-crawler-item">COMING SOON</span>
+      </div>
+    </div>
+  </div>
+
   <div class="columns">
     <div class="column1">
       <p class="site-name">SIMON HAERTER</p>
@@ -405,20 +493,120 @@
   </div>
 
   <script>
-    document.querySelectorAll('.text-crawler').forEach((crawler) => {
-      const crawlerTrack = crawler.querySelector('.text-crawler-track');
-      const crawlerItem = crawlerTrack.querySelector('.text-crawler-item');
+    const initializeCrawlers = () => {
+      document.querySelectorAll('.text-crawler').forEach((crawler) => {
+        const crawlerTrack = crawler.querySelector('.text-crawler-track');
+        if (!crawlerTrack) return;
 
-      while (crawlerTrack.scrollWidth < crawler.clientWidth) {
-        crawlerTrack.appendChild(crawlerItem.cloneNode(true));
-      }
+        const originalItem = crawlerTrack.querySelector('.text-crawler-item');
+        if (!originalItem) return;
 
-      Array.from(crawlerTrack.children).forEach((item) => {
-        const crawlerClone = item.cloneNode(true);
-        crawlerClone.setAttribute('aria-hidden', 'true');
-        crawlerTrack.appendChild(crawlerClone);
+        const children = Array.from(crawlerTrack.children);
+        if (children.length === 0) {
+          crawlerTrack.appendChild(originalItem.cloneNode(true));
+        }
+
+        const baseItem = crawlerTrack.querySelector('.text-crawler-item');
+        if (!baseItem) return;
+
+        while (crawlerTrack.scrollWidth < crawler.clientWidth * 1.8) {
+          const crawlerClone = baseItem.cloneNode(true);
+          crawlerClone.setAttribute('aria-hidden', 'true');
+          crawlerTrack.appendChild(crawlerClone);
+        }
       });
-    });
+    };
+
+    const customCursor = document.querySelector('.custom-cursor');
+    const interactiveSelectors = 'a, button, input, textarea, select, summary, [role="button"], [onclick], .clickable';
+
+    if (customCursor) {
+      let currentCursorScale = 1.19;
+      let targetCursorScale = 1.19;
+
+      const animateCursor = () => {
+        const easing = targetCursorScale < currentCursorScale ? 0.35 : 0.12;
+        currentCursorScale += (targetCursorScale - currentCursorScale) * easing;
+
+        if (Math.abs(targetCursorScale - currentCursorScale) < 0.001) {
+          currentCursorScale = targetCursorScale;
+        }
+
+        customCursor.style.transform = 'translate(-50%, -50%) scale(' + currentCursorScale.toFixed(4) + ')';
+        requestAnimationFrame(animateCursor);
+      };
+
+      const getSafeArea = (element) => {
+        const rect = element.getBoundingClientRect();
+        const margin = 24;
+        return {
+          left: rect.left - margin,
+          top: rect.top - margin,
+          right: rect.right + margin,
+          bottom: rect.bottom + margin,
+        };
+      };
+
+      const getNearestDistance = (x, y) => {
+        let closest = Infinity;
+
+        Array.from(document.querySelectorAll(interactiveSelectors)).forEach((element) => {
+          const safeArea = getSafeArea(element);
+          const insideX = x >= safeArea.left && x <= safeArea.right;
+          const insideY = y >= safeArea.top && y <= safeArea.bottom;
+
+          if (insideX && insideY) {
+            closest = 0;
+            return;
+          }
+
+          const dx = x < safeArea.left ? safeArea.left - x : x > safeArea.right ? x - safeArea.right : 0;
+          const dy = y < safeArea.top ? safeArea.top - y : y > safeArea.bottom ? y - safeArea.bottom : 0;
+          const distance = Math.max(dx, dy);
+          closest = Math.min(closest, distance);
+        });
+
+        return closest;
+      };
+
+      const updateCursor = (event) => {
+        const x = event.clientX;
+        const y = event.clientY;
+
+        customCursor.style.left = x + 'px';
+        customCursor.style.top = y + 'px';
+
+        const nearestDistance = getNearestDistance(x, y);
+
+        if (nearestDistance < Infinity) {
+          const minScale = 0.08;
+          const scale = nearestDistance === 0
+            ? minScale
+            : Math.min(1.19, 1 + nearestDistance / 120);
+
+          targetCursorScale = Math.max(minScale, scale);
+          document.body.style.cursor = nearestDistance === 0 ? 'auto' : 'none';
+        } else {
+          targetCursorScale = 1.19;
+          document.body.style.cursor = 'none';
+        }
+      };
+
+      requestAnimationFrame(animateCursor);
+
+      window.addEventListener('pointermove', updateCursor);
+      document.addEventListener('pointerover', updateCursor);
+      document.addEventListener('pointerout', (event) => {
+        const target = event.target;
+        if (target && target.closest && target.closest(interactiveSelectors)) {
+          targetCursorScale = 1.19;
+          document.body.style.cursor = 'none';
+        }
+      });
+    }
+
+    initializeCrawlers();
+    window.addEventListener('resize', initializeCrawlers);
   </script>
 
 </body>
