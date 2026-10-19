@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Simon Haerter is a Swiss graphic designer working across brand identity, campaigns, and motion.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png" sizes="48x48">
   <title>Simon Haerter</title>
   <style>
     /* Fonts */
@@ -65,7 +65,7 @@
       --listing-font-size: 9pt;
       --listing-line-height: 1.35;
       --site-name-font-size: 11pt;
-      --crawler-speed: 8s;
+      --crawler-speed: 7s;
       background: #fff;
       color: var(--body-color);
       font-family: 'YourFont', sans-serif;
@@ -186,21 +186,21 @@
 
     @keyframes crawler-scroll {
       0%, 100% {
-        transform: translateX(0);
+        transform: translateX(var(--crawler-start-offset, 0px));
       }
 
       50% {
-        transform: translateX(calc(-1 * var(--crawler-travel, 0px)));
+        transform: translateX(calc(var(--crawler-start-offset, 0px) - var(--crawler-travel, 0px)));
       }
     }
 
     @keyframes crawler-scroll-reverse {
       0%, 100% {
-        transform: translateX(calc(-1 * var(--crawler-travel, 0px)));
+        transform: translateX(calc(var(--crawler-start-offset, 0px) - var(--crawler-travel, 0px)));
       }
 
       50% {
-        transform: translateX(0);
+        transform: translateX(var(--crawler-start-offset, 0px));
       }
     }
 
@@ -234,6 +234,8 @@
       }
 
       .custom-cursor {
+        /* Adjust this value to change how early both crawlers reverse. */
+        --crawler-turn-inset: 15px;
         position: fixed;
         top: 0;
         left: 0;
@@ -586,7 +588,11 @@
           const cursorScale = new DOMMatrixReadOnly(getComputedStyle(customCursor).transform).a;
           const contentWidth = crawlerTrack.getBoundingClientRect().width / cursorScale;
           const containerWidth = crawler.getBoundingClientRect().width / cursorScale;
-          const travel = Math.max(0, contentWidth - containerWidth);
+          const turnInset = parseFloat(getComputedStyle(customCursor).getPropertyValue('--crawler-turn-inset')) || 0;
+          const fullTravel = Math.max(0, contentWidth - containerWidth);
+          const inset = Math.min(turnInset, fullTravel / 2);
+          const travel = fullTravel - inset * 2;
+          crawlerTrack.style.setProperty('--crawler-start-offset', -inset + 'px');
           crawlerTrack.style.setProperty('--crawler-travel', travel + 'px');
         }
 
