@@ -150,7 +150,7 @@
     .work-rotator::after {
       position: absolute;
       inset: 0;
-      background: #000;
+      background: #000000;
       content: '';
       pointer-events: none;
     }
@@ -190,13 +190,13 @@
       }
 
       50% {
-        transform: translateX(-50%);
+        transform: translateX(calc(-1 * var(--crawler-travel, 0px)));
       }
     }
 
     @keyframes crawler-scroll-reverse {
       0%, 100% {
-        transform: translateX(-50%);
+        transform: translateX(calc(-1 * var(--crawler-travel, 0px)));
       }
 
       50% {
@@ -252,20 +252,20 @@
       .custom-cursor .text-crawler {
         width: 100%;
         margin: 0;
-        background: transparent;
+        background: #000000;
         color: #fff;
         overflow: visible;
       }
 
       .custom-cursor .text-crawler-track {
-        background: transparent;
+        background: #000000;
         color: #fff;
         min-width: max-content;
       }
 
       .custom-cursor .text-crawler-item {
         color: #fff;
-        background: #000;
+        background: #000000;
         padding: 0.15em 0.5em 0.2em 0.5em;
         display: inline-block;
       }
@@ -274,13 +274,17 @@
         width: 100%;
         min-height: 0;
         height: 100%;
-        background: #000;
+        background: #000000;
         aspect-ratio: 4 / 5;
         overflow: hidden;
       }
 
       .columns {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mobile-only-spacer {
+        display: none;
       }
 
       .column2 {
@@ -317,6 +321,42 @@
 
     /* Mobile */
     @media (max-width: 768px) {
+      .text-crawler-track {
+        animation-name: mobile-crawler-scroll;
+        animation-duration: 2s;
+        animation-play-state: paused;
+        will-change: transform;
+        backface-visibility: hidden;
+      }
+
+      .text-crawler-track.crawler-ready {
+        animation-play-state: running;
+      }
+
+      .text-crawler-reverse .text-crawler-track {
+        animation-name: mobile-crawler-scroll-reverse;
+      }
+
+      @keyframes mobile-crawler-scroll {
+        from {
+          transform: translate3d(0, 0, 0);
+        }
+
+        to {
+          transform: translate3d(calc(-1 * var(--crawler-distance)), 0, 0);
+        }
+      }
+
+      @keyframes mobile-crawler-scroll-reverse {
+        from {
+          transform: translate3d(calc(-1 * var(--crawler-distance)), 0, 0);
+        }
+
+        to {
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
       html,
       body {
         cursor: auto;
@@ -409,11 +449,19 @@
       
       <p class="title">CONTACT</p>
       <p class="links">
-        <a href="mailto:simonhaerter@gmail.com">simonhaerter@gmail.com</a> </p>
+        <a href="mailto:studio@simonhaerter.com">studio@simonhaerter.com</a> </p>
         <div class="spacer"></div>
 
-        </p> <a href="https://www.linkedin.com/in/simonhaerter/" target="_blank">LinkedIn</a></p>
-        <a href="https://instagram.com/simonhaerter.graphics" target="_blank">Instagram</a> </p>
+        <p><a href="https://www.linkedin.com/in/simonhaerter/" target="_blank">LinkedIn</a></p>
+        <p><a href="https://instagram.com/simonhaerter.graphics" target="_blank">Instagram</a></p>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer mobile-only-spacer"></div>
+        <p>Portfolio available upon request.</p>
       
     </div>
 
@@ -477,16 +525,15 @@
 
 
     <p class="title">SELECTED CLIENTS</p>
-    <p class="listing">- Akku Kunstplattform</p>
-    <p class="listing">- Jazz’n’more</p>
-    <p class="listing">- Letterspace</p>
-    <p class="listing">- NaN Type Foundry</p>
-    <p class="listing">- NorthernLight</p>
-    <p class="listing">- RunRabbitRun</p>
-    <p class="listing">- Starboard Boats</p>
-    <p class="listing">- Unit Records</p>
-    <p class="listing">- University of Bern</p>
-    <p class="listing">- Zurich Design Weeks</p>
+    <p class="listing">Akku Kunstplattform</p>
+    <p class="listing">Jazz’n’more</p>
+    <p class="listing">Letterspace</p>
+    <p class="listing">NaN Type Foundry</p>
+    <p class="listing">NorthernLight</p>
+    <p class="listing">Starboard Boats</p>
+    <p class="listing">Unit Records</p>
+    <p class="listing">University of Bern</p>
+    <p class="listing">Zurich Design Weeks</p>
 
 
     <div class="spacer"></div>
@@ -498,7 +545,11 @@
   </div>
 
   <script>
+    let crawlerFontsReady = false;
+
     const initializeCrawlers = () => {
+      if (!crawlerFontsReady) return;
+
       document.querySelectorAll('.text-crawler').forEach((crawler) => {
         const crawlerTrack = crawler.querySelector('.text-crawler-track');
         if (!crawlerTrack) return;
@@ -514,10 +565,33 @@
         const baseItem = crawlerTrack.querySelector('.text-crawler-item');
         if (!baseItem) return;
 
-        while (crawlerTrack.scrollWidth < crawler.clientWidth * 1.8) {
+        const isMobileCrawler = window.matchMedia('(max-width: 768px)').matches
+          && !crawler.closest('.custom-cursor');
+        const itemWidth = baseItem.getBoundingClientRect().width;
+        const minimumTrackWidth = isMobileCrawler
+          ? crawler.clientWidth + itemWidth
+          : crawler.clientWidth * 1.8;
+
+        if (isMobileCrawler) {
+          crawlerTrack.style.setProperty('--crawler-distance', itemWidth + 'px');
+        }
+
+        while (crawlerTrack.scrollWidth < minimumTrackWidth) {
           const crawlerClone = baseItem.cloneNode(true);
           crawlerClone.setAttribute('aria-hidden', 'true');
           crawlerTrack.appendChild(crawlerClone);
+        }
+
+        if (crawler.closest('.custom-cursor')) {
+          const cursorScale = new DOMMatrixReadOnly(getComputedStyle(customCursor).transform).a;
+          const contentWidth = crawlerTrack.getBoundingClientRect().width / cursorScale;
+          const containerWidth = crawler.getBoundingClientRect().width / cursorScale;
+          const travel = Math.max(0, contentWidth - containerWidth);
+          crawlerTrack.style.setProperty('--crawler-travel', travel + 'px');
+        }
+
+        if (isMobileCrawler) {
+          crawlerTrack.classList.add('crawler-ready');
         }
       });
     };
@@ -525,7 +599,7 @@
     const customCursor = document.querySelector('.custom-cursor');
     const interactiveSelectors = 'a, button, input, textarea, select, summary, [role="button"], [onclick], .clickable';
 
-    if (customCursor) {
+    if (customCursor && window.matchMedia('(min-width: 769px)').matches) {
       let currentCursorScale = 1.19;
       let targetCursorScale = 1.19;
 
@@ -610,7 +684,10 @@
       });
     }
 
-    initializeCrawlers();
+    document.fonts.ready.then(() => {
+      crawlerFontsReady = true;
+      initializeCrawlers();
+    });
     window.addEventListener('resize', initializeCrawlers);
   </script>
 
